@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load comment_tags %}
+{% block header_extends %}
+     <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/blog-list.css' %}">
+{% endblock %}
+{% block title %}博客列表{% endblock %}
+ {% block content %}
+    <div class="container body">
+    <div class="row">
+      <div class="col-xs-12 col-sm-9 col-md-9">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+              {% block blog_list_title %}
+              &nbsp;&nbsp;&nbsp;博客列表(一共有{{ blogs|length }}篇博客)
+              {% endblock %}
+             </div>
+          <div class="panel-body">
+              {% for blog in page_of_blogs.object_list %}
+          <div class="blog-list">
+                   <div class="blog-list-item clearfix">
+                        <div class="col-xs-4">
+                            <div class="blog-img"><a href="{% url 'blog_detail' blog.pk %}"><img src="{{ MEDIA_URL }}{{ blog.image }}"></a></div>
+                        </div>
+                        <div class="col-xs-8 blog-massage">
+                            <div>
+                                <a class="blog-title" href="{% url 'blog_detail' blog.pk %}">
+                                {{ blog.title }}
+                            </a>
+                            </div>
+
+                            <div class="info">
+                               <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                   <a class="blog-type" href="{% url 'blog_type_list' blog.blog_type.id %}">{{ blog.blog_type }}</a>&nbsp;&nbsp;
+                    <span class="glyphicon glyphicon-time" aria-hidden="true"></span>&nbsp;{{ blog.created_time|date:"Y-m-d" }}&nbsp;&nbsp;&nbsp;阅读({{ blog.get_read_num }})&nbsp;&nbsp;评论({% get_comment_count blog %})</p>
+                <p>{{ blog.content|striptags|truncatechars:36 }}</p>
+                            </div>
+                        </div>
+
+                    </div>
+          </div>
+              {% empty %}
+                <p>--暂无博客，敬请期待--</p>
+                 {% endfor %}
+         </div>
+          </div>
+        </div>
+
+      <div class="hidden-xs col-sm-3 col-md-3">
+        <div class="panel panel-default">
+          <div class="panel-heading">博客分类</div>
+          <div class="panel-body">
+            <ul style="list-style-type: none;">
+              {% for blog_type in blog_types %}
+              <li><a class="blog-bar-type" href="{% url 'blog_type_list' blog_type.pk %}" >{{ blog_type.type_name }}({{ blog_type.blog_set.count }})</a></li>
+              {% endfor %}
+          </ul>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-heading">日期归档</div>
+          <div class="panel-body">
+            <ul style="list-style-type: none;">
+              {% for blog_date,blog_count in blog_dates.items %}
+              <li><a class="blog-bar-type" href="{% url 'blog_date_list' blog_date.year blog_date.month %}">{{ blog_date|date:'Y年m月' }}({{ blog_count }})</a></li>
+              {% endfor %}
+          </ul>
+          </div>
+        </div>
+      </div>
+   </div>
+                            <div class="paginator">
+                            <ul class="pagination">
+                            {% if page_of_blogs.has_previous %}
+                                <li class="long"><a href="?{{ page_of_blogs.previous_page_number.querystring }}">上一页</a></li>
+                            {% endif %}
+
+                            {% for page in page_of_blogs.pages %}
+                                {% if page %}
+                                    {% ifequal page page_of_blogs.number %}
+                                        <li class="active"><a href="?{{ page.querystring }}">{{ page }}</a></li>
+                                    {% else %}
+                                        <li><a href="?{{ page.querystring }}" class="page">{{ page }}</a></li>
+                                    {% endifequal %}
+                                {% else %}
+                                    <li class="none"><a href="">...</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if page_of_blogs.has_next %}
+                                <li class="long"><a href="?{{ page_of_blogs.next_page_number.querystring }}">下一页</a></li>
+                            {% endif %}
+              </ul>
+    </div>
+</div>
+
+
+
+{% endblock %}
+{% block active_blog_list %}active{% endblock %}

@@ -1,0 +1,18 @@
+
+div.hot-data {
+    text-align: center;
+    margin-top: 2em;
+}
+.panel-default {
+    border-color: #ddd;
+    margin-top: 18px;
+}
+.panel-default>.panel-heading {
+    color: red;
+    background-color: black;
+    border-color: #ddd;
+    font-size: 18px;
+}
+h3.home-content{
+    margin-left: 52px;
+}
